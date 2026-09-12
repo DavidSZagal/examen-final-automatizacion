@@ -1,4 +1,5 @@
 # Examen Final de Automatización de Pruebas
+[![CI - Build y Pruebas](https://github.com/DavidSZagal/examen-final-automatizacion/actions/workflows/ci.yml/badge.svg)](https://github.com/DavidSZagal/examen-final-automatizacion/actions/workflows/ci.yml)
 
 ## Descripción
 
@@ -44,3 +45,78 @@ Los cambios pasan desde una rama `feature` hacia `develop` y posteriormente desd
 ## Autor
 
 David Sandoval
+## Actividad 2: Integración continua y pruebas automatizadas
+
+### Funcionalidad implementada
+
+Se desarrolló una API REST para administrar productos. La aplicación permite registrar productos, consultar el catálogo y reducir el stock disponible. Los datos se almacenan mediante Spring Data JPA y una base de datos H2.
+
+### Endpoints disponibles
+
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| GET | `/api/productos` | Obtiene todos los productos registrados. |
+| POST | `/api/productos` | Registra un producto validando nombre, precio y stock. |
+| PATCH | `/api/productos/{id}/stock?cantidad=2` | Reduce el stock de un producto existente. |
+
+### Estrategia de pruebas
+
+El proyecto contiene los siguientes niveles de prueba:
+
+- **Pruebas unitarias:** `ProductoServiceTest` utiliza JUnit y Mockito para comprobar la creación de productos, duplicados, reducción de stock y stock insuficiente.
+- **Pruebas de integración:** `ProductoControllerIT` utiliza Spring Boot, MockMvc y H2 para comprobar los endpoints y su integración con la base de datos.
+- **Prueba de contexto:** verifica que la aplicación Spring Boot pueda iniciar correctamente.
+
+Actualmente se ejecutan:
+
+- 5 pruebas unitarias y de contexto mediante Maven Surefire.
+- 3 pruebas de integración mediante Maven Failsafe.
+- 8 pruebas automatizadas en total.
+- 0 fallos y 0 errores.
+
+### Pipeline de integración continua
+
+El workflow se encuentra en:
+
+```text
+.github/workflows/ci.yml
+```
+
+El pipeline se ejecuta automáticamente al realizar:
+
+- Push en `main`, `develop` o ramas `feature/**`.
+- Pull request hacia `main` o `develop`.
+- Ejecución manual mediante `workflow_dispatch`.
+
+El pipeline realiza las siguientes tareas:
+
+1. Descarga el código del repositorio.
+2. Configura Java 17 y la caché de Maven.
+3. Compila el proyecto.
+4. Ejecuta las pruebas unitarias.
+5. Ejecuta las pruebas de integración.
+6. Genera el reporte de cobertura JaCoCo.
+7. Publica los reportes de prueba como artefactos.
+8. Publica la aplicación Java compilada.
+
+### Ejecución local
+
+Para ejecutar todas las validaciones en Windows:
+
+```bash
+mvn.cmd clean verify
+```
+
+Para ejecutar solamente las pruebas unitarias:
+
+```bash
+mvn.cmd test
+```
+
+Los reportes quedan disponibles en:
+
+```text
+target/surefire-reports
+target/failsafe-reports
+target/site/jacoco/index.html
+```
